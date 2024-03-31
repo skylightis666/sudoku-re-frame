@@ -1,0 +1,1 @@
+["^ ","~$generate-board",["^ ","~:row",7,"~:col",1,"~:fixed-arities",["~#set",[0]],"~:name","^0","~:ns","~$sudoku.events","~:top-ns","^7","~:arities",["^ ","~i0",["^ ","~:ret",["^ ","~:type","~:map","~:val",["^ "],"^1",11,"^2",5,"~:end-row",11,"~:end-col",40],"~:arglist-str","[]"]],"^;","~:fn"],"~:filename","/Users/skylight/prog/sudoku/src/sudoku/events.cljs"]
