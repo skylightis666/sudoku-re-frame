@@ -1,1 +1,1 @@
-["^ ","~$default-db",["^ ","~:row",3,"~:col",1,"~:name","^0","~:ns","~$sudoku.db","~:top-ns","^5","~:type","~:any"],"~:filename","/Users/skylight/prog/sudoku/src/sudoku/db.cljs"]
+["^ ","~$default-db",["^ ","~:row",3,"~:col",1,"~:name","^0","~:ns","~$sudoku.db","~:top-ns","^5","~:type",["^ ","^7","~:map","~:val",["^ ","~:selected-cell",["^ ","^1",4,"~:end-row",4,"^2",19,"~:end-col",24,"~:tag","~:vector"],"~:board",["^ ","^1",5,"^;",5,"^2",11,"^<",58,"^=","~:any"]]]],"~:filename","/Users/skylight/prog/sudoku/src/sudoku/db.cljs"]
