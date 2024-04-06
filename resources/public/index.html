@@ -4,27 +4,35 @@
     <meta charset='utf-8'>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>sudoku</title>
-        <style>
-    .cell {
-        width: 40px;
-        height: 40px;
-        margin: 5px;
-        padding: 5px;
-        border-radius: 4px;
-        font-size: 18px;
-        text-align: center;
-        border: 2px solid #333;
-        outline: none;
-    }
-
-    .cell:hover {
-        border-color: #00a;
-    }
-
-    .cell:focus {
-        border-color: #00f;
-    }
-    </style>
+    <style>
+      .cell {
+          width: 40px;
+          height: 40px;
+          margin: 5px;
+          padding: 5px;
+          border-radius: 4px;
+          font-size: 18px;
+          text-align: center;
+          border: 2px solid #333;
+          outline: none;
+      }
+      
+      .cell:hover {
+          border-color: #00a;
+      }
+      
+      .cell:focus {
+          border-color: #00f;
+      }
+      
+      .cell.block-border-right {
+          border-right: 4px solid #000;
+      }
+      
+      .cell.block-border-bottom {
+          border-bottom: 4px solid #000;
+      }
+      </style>
   </head>
   <body>
     <noscript>

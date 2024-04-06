@@ -25,17 +25,17 @@
 
 
 (defn check-all-rows-cols-and-boxes [db]
-  (let [values (mapv db (range 16))
-        rows (partition 4 values)
+  (let [values (mapv db (range 81))
+        rows (partition 9 values)
         columns (apply map vector rows)
-        squares (for [i (range 0 4 2)
-                      j (range 0 4 2)]
-                  (for [x (range 0 2)
-                        y (range 0 2)]
-                    (get values (+ (+ i x) (* 4 (+ j y))))))
+        squares (for [i (range 0 9 3)
+                      j (range 0 9 3)]
+                  (for [x (range 0 3)
+                        y (range 0 3)]
+                    (get values (+ (* 9 (+ i x)) (+ j y)))))
         all-parts (concat rows columns squares)]
     (print all-parts)
-    (and (every? #(= 10 (reduce + %)) all-parts)
+    (and (every? #(= 45 (reduce + %)) all-parts)
          (every? #(apply distinct? %) all-parts))))
 
 (re-frame/reg-event-db
@@ -53,11 +53,15 @@
     (assoc db :selected-cell idx)))
 
 (defn cell-component [idx]
-  (let [cell-value (re-frame/subscribe [:cell idx])]
+  (let [cell-value (re-frame/subscribe [:cell idx])
+        x (Math/floor (/ idx 9)) ; row number
+        y (Math/floor (mod idx 9)) ;column number
+        right-border (if (or (= 2 y) (= 5 y) (= 8 y)) "block-border-right" "")
+        bottom-border (if (or (= 2 x) (= 5 x) (= 8 x)) "block-border-bottom" "")]
     (fn []
-      [:button {:class   "cell"
+      [:button {:class (str "cell " right-border " " bottom-border)
                 :on-click #(re-frame/dispatch [:select-cell idx])}
-       (or @cell-value "&nbsp;")])))
+       (or @cell-value " ")])))
 
 (defn block-component [indices]
   [:div {:class "block"}
@@ -66,8 +70,8 @@
   
 (defn board-component []
   [:div {:class "board"}
-   (for [i (range 0 16 4)]
-     ^{:key i} [block-component (range i (+ i 4))])])
+   (for [i (range 0 81 9)]
+     ^{:key i} [block-component (range i (+ i 9))])])
 
 (defn set-value-button [v]
   (let [selected (re-frame/subscribe [:selected-cell])]
@@ -78,6 +82,6 @@
   (fn []
     [:div
      [board-component]
-     (for [v (range 1 5)]
+     (for [v (range 1 10)]
        ^{:key v} [set-value-button v])
      [:button {:on-click #(re-frame/dispatch [:complete-sudoku])} "Check Solution"]]))   
