@@ -54,25 +54,36 @@
 
 (defn cell-component [idx]
   (let [cell-value (re-frame/subscribe [:cell idx])
-        x (Math/floor (/ idx 9)) ; row number
-        y (Math/floor (mod idx 9)) ;column number
-        right-border (if (or (= 2 y) (= 5 y) (= 8 y)) "block-border-right" "")
-        bottom-border (if (or (= 2 x) (= 5 x) (= 8 x)) "block-border-bottom" "")]
+        selected-cell (re-frame/subscribe [:selected-cell])]
     (fn []
-      [:button {:class (str "cell " right-border " " bottom-border)
+      [:button {:style (merge {:width "100%"
+                               :height "100%"
+                               :border "1px solid #999"
+                               :display "flex"
+                               :justifyContent "center"
+                               :alignItems "center"
+                               :backgroundColor (if (= @selected-cell idx) "#fdd835" "#f0f0f0")})
                 :on-click #(re-frame/dispatch [:select-cell idx])}
        (or @cell-value " ")])))
 
-(defn block-component [indices]
-  [:div {:class "block"}
-   (for [idx indices]
-     ^{:key idx} [cell-component idx])])
-  
-(defn board-component []
-  [:div {:class "board"}
-   (for [i (range 0 81 9)]
-     ^{:key i} [block-component (range i (+ i 9))])])
+(defn block-component [idx]
+  [:div {:style {:display "grid"
+                 :gridTemplateColumns "repeat(3, 1fr)"
+                 :gridTemplateRows "repeat(3, 1fr)"
+                 :border "1px solid black"
+                 :boxSizing "border-box"
+                 :gaps "0"}}
+   (for [i (range 9)]
+     ^{:key i} [cell-component (+ (* 9 idx) i)])])
 
+(defn sudoku-grid []
+  [:div {:style {:display "grid"
+                 :gridTemplateColumns "repeat(3, 1fr)"
+                 :gridTemplateRows "repeat(3, 1fr)"
+                 :gaps "0"}}
+   (for [i (range 9)]
+     ^{:key i} [block-component i])])
+  
 (defn set-value-button [v]
   (let [selected (re-frame/subscribe [:selected-cell])]
     (fn []
@@ -80,8 +91,22 @@
 
 (defn main-panel []
   (fn []
-    [:div
-     [board-component]
-     (for [v (range 1 10)]
-       ^{:key v} [set-value-button v])
-     [:button {:on-click #(re-frame/dispatch [:complete-sudoku])} "Check Solution"]]))   
+    [:div {:style {:display "grid"
+                   :gridTemplateColumns "auto auto"
+                   :gap "10px"
+                   :justifyContent "center"}}
+     [:div {:style {:gridColumn 1
+                    :justifySelf "center"
+                    :maxWidth "600px"}}
+      [sudoku-grid]]
+     [:div {:style {:gridColumn 2
+                    :maxWidth "200px"
+                    :display "grid"
+                    :gridTemplateColumns "repeat(3, 1fr)" ;; three columns
+                    :gridTemplateRows "repeat(3, 1fr)"    ;; three rows
+                    :gap "5px"}}                           ;; add gaps between buttons
+      (doall
+       (for [v (range 1 10)]
+         ^{:key v} [set-value-button v]))]
+     [:button {:on-click #(re-frame/dispatch [:complete-sudoku])} "Check Solution"]])) 
+                       

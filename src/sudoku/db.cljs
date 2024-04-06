@@ -1,46 +1,35 @@
 (ns sudoku.db)
 
-(defn cell-coords [idx]
-  (let
-   [x (mod idx 9)
-    y (quot idx 9)]
-    [x y]))
+(defn shift-row
+  [row shift]
+  (into (subvec row shift) (subvec row 0 shift)))
 
-(defn related-cell-indices [x y]
-  (let
-   [box-x (quot x 3)
-    box-y (quot y 3)]
-    (->> (for [i (range 81)
-               :let [[cell-x cell-y] (cell-coords i)]
-               :when (or (= cell-x x) (= cell-y y)
-                         (and (= (quot cell-x 3) box-x)
-                              (= (quot cell-y 3) box-y)))]
-           i))))
+(shift-row (vec (shuffle (range 1 10))) 3)
 
-(defn valid-numbers [board idx]
-  (let
-   [[x y] (cell-coords idx)
-    related-indices (related-cell-indices x y)
-    related-numbers (map #(board %) related-indices)
-    possible-numbers (range 1 10)]
-    (remove #(contains? (set related-numbers) %) possible-numbers)))
+(defn gen-full-sudoku []
+  (let [row1 (vec (shuffle (range 1 10)))               ;; generating first row
+        row2 (shift-row row1 3)                         ;; generating second row
+        row3 (shift-row row2 3)                         ;; generating third row
+        row4 (shift-row row3 1)                         ;; generating fourth row
+        row5 (shift-row row4 3)                         ;; generating fifth row
+        row6 (shift-row row5 3)                         ;; generating sixth row
+        row7 (shift-row row6 1)                         ;; generating seventh row
+        row8 (shift-row row7 3)                         ;; generating eighth row
+        row9 (shift-row row8 3)]                         ;; generating ninth row
+    [row1 row2 row3 row4 row5 row6 row7 row8 row9]))
 
-(defn solve-sudoku-helper [board]
-  (if-let [idx (first (keep-indexed #(when (nil? %2) %1) board))]
-    (let [valid-nums (valid-numbers board idx)]
-      (if (empty? valid-nums)
-        nil
-        (lazy-seq (mapcat (fn [n] (solve-sudoku-helper (assoc board idx n))) valid-nums))))
-    [board]))
-
-(defn generate-sudoku []
-  (let
-   [empty-board (vec (repeat 81 nil))
-    solutions (solve-sudoku-helper empty-board)]
-    (first solutions)))
+(->> (gen-full-sudoku)
+     flatten
+     vec)
+;; (map reverse (generate-sudoku))
   
+(defn adjust [v]
+  (mapv (fn [x] (if (< (rand) 0.3) "" x)) v))
 
 (def default-db
   {:selected-cell [0 0]
-   :board (generate-sudoku)})
+   :board (-> (gen-full-sudoku)
+              flatten
+              vec
+              adjust)})
   
