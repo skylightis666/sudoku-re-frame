@@ -15,6 +15,16 @@
     (board idx)))
 
 (re-frame/reg-sub
+ :pre-filled-cells
+ (fn [db _] (:pre-filled-cells db)))
+
+(re-frame/reg-sub
+ :cell-selectable?
+ :<- [:pre-filled-cells]
+ (fn [board [_ idx]]
+   (nth board idx)))
+
+(re-frame/reg-sub
   :selected-cell
   (fn [db _] (:selected-cell db)))
 
@@ -34,7 +44,6 @@
                         y (range 0 3)]
                     (get values (+ (* 9 (+ i x)) (+ j y)))))
         all-parts (concat rows columns squares)]
-    (print all-parts)
     (and (every? #(= 45 (reduce + %)) all-parts)
          (every? #(apply distinct? %) all-parts))))
 
@@ -54,6 +63,7 @@
 
 (defn cell-component [idx]
   (let [cell-value (re-frame/subscribe [:cell idx])
+        cell-selectable? (re-frame/subscribe [:cell-selectable? idx])
         selected-cell (re-frame/subscribe [:selected-cell])]
     (fn []
       [:button {:style (merge {:width "100%"
@@ -62,8 +72,13 @@
                                :display "flex"
                                :justifyContent "center"
                                :alignItems "center"
-                               :backgroundColor (if (= @selected-cell idx) "#fdd835" "#f0f0f0")})
-                :on-click #(re-frame/dispatch [:select-cell idx])}
+                               :backgroundColor (if (= @selected-cell idx) 
+                                                  "#fdd835" 
+                                                  (if @cell-selectable?
+                                                   "#c3cdea"
+                                                    "#f0f0f0"))})
+                :on-click #(if @cell-selectable? 
+                             (re-frame/dispatch [:select-cell idx]))}
        (or @cell-value " ")])))
 
 (defn block-component [idx]
@@ -91,14 +106,16 @@
 
 (defn main-panel []
   (fn []
-    [:div {:style {:display "grid"
+    [:div {:style {:margin-top "250px"
+                   :display "grid"
                    :gridTemplateColumns "auto auto"
                    :gap "10px"
+                   :scale "250%"
                    :justifyContent "center"}}
      [:div {:style {:gridColumn 1
                     :justifySelf "center"
                     :maxWidth "600px"}}
-      [sudoku-grid]]
+      [sudoku-grid]] 
      [:div {:style {:gridColumn 2
                     :maxWidth "200px"
                     :display "grid"

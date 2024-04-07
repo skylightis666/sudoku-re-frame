@@ -27,9 +27,11 @@
   (mapv (fn [x] (if (< (rand) 0.3) "" x)) v))
 
 (def default-db
-  {:selected-cell [0 0]
-   :board (-> (gen-full-sudoku)
-              flatten
-              vec
-              adjust)})
+  (let [board (-> (gen-full-sudoku)
+                  flatten
+                  vec
+                  adjust)] 
+    {:selected-cell    [0 0]
+     :board            board
+     :pre-filled-cells (mapv #(= "" %) board)}))
   
