@@ -8,7 +8,10 @@
  [[reagent "1.1.1"]
   [re-frame "1.4.2"]
 
-  [binaryage/devtools "1.0.6"]]
+  [binaryage/devtools "1.0.6"]
+  [day8.re-frame/test "0.1.5"]]
+
+ :profiles {:test {:dependencies [[day8.re-frame/test "0.1.5"]]}}
 
  :dev-http
  {8280 "resources/public"
@@ -26,4 +29,14 @@
    :dev
    {:compiler-options
     {:closure-defines
-     { }}}}}}
+     { }}}}
+  
+  :test {:target :node-test
+          :output-to "out/tests.js"
+          :ns-regexp "-test$"}
+
+  :browser-test {:target :browser-test
+                 :test-dir "target/browser-test"
+                 :ns-regexp "-test$"
+                 :autorun   true}
+  }}

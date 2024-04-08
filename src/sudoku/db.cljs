@@ -17,11 +17,6 @@
         row8 (shift-row row7 3)                         ;; generating eighth row
         row9 (shift-row row8 3)]                         ;; generating ninth row
     [row1 row2 row3 row4 row5 row6 row7 row8 row9]))
-
-(->> (gen-full-sudoku)
-     flatten
-     vec)
-;; (map reverse (generate-sudoku))
   
 (defn adjust [v]
   (mapv (fn [x] (if (< (rand) 0.3) "" x)) v))

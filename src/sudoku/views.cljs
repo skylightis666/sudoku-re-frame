@@ -1,8 +1,6 @@
 (ns sudoku.views
   (:require
-   [re-frame.core :as re-frame]
-   [sudoku.subs :as s]
-   [sudoku.events :as e]))
+   [re-frame.core :as re-frame]))
    
 (re-frame/reg-sub
   :board
